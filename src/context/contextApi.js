@@ -1,43 +1,40 @@
-import React, {createContext,useState,useEffect} from "react";
-import {fetchDataFromApi} from "../utils/api";
+import React, { createContext, useState, useEffect } from "react";
 
-export const Context =createContext();
-export const AppContext = (props)=>{
-          const  [loading, setLoading] = useState(false);
-          const  [searchResults, setsearchResults] = useState(false);
-          const  [selectCategories, setselectCategories] = useState("New");
-          const [mobileMenu, setmobileMenu] = useState(false);
+import { fetchDataFromApi } from "../utils/api";
+export const Context = createContext();
 
-          useEffect(() => {
-                    fetchSelectedCategoryData(selectCategories)
-          
-            
-          }, [selectCategories]);
+export const AppContext = (props) => {
+    const [loading, setLoading] = useState(false);
+    const [searchResults, setSearchResults] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState("New");
+    const [mobileMenu, setMobileMenu] = useState(false);
 
-const fetchSelectedCategoryData = (query)=>{
-          setLoading(true)
-          fetchDataFromApi(`search/?q={query}`).then(({contents})=>{
-                    console.log(contents)
-                    setsearchResults(contents)
-                    setLoading(false)
-          })
+    useEffect(() => {
+        fetchSelectedCategoryData(selectedCategory);
+    }, [selectedCategory]);
 
-}
-          return(
-                    <Context.Provider value={{
-                              loading,
-                              setLoading,
-                              searchResults,
-                              setsearchResults,
-                              selectCategories,
-                              setselectCategories,
-                              mobileMenu,
-                              setmobileMenu
+    const fetchSelectedCategoryData = (query) => {
+        setLoading(true);
+        fetchDataFromApi(`search/?q=${query}`).then(({ contents }) => {
+            console.log(contents);
+            setSearchResults(contents);
+            setLoading(false);
+        });
+    };
 
-                    }}>
-                              {props.children}
-                              </Context.Provider>
-          )
-
-          
-}
+    return (
+        <Context.Provider
+            value={{
+                loading,
+                setLoading,
+                searchResults,
+                selectedCategory,
+                setSelectedCategory,
+                mobileMenu,
+                setMobileMenu,
+            }}
+        >
+            {props.children}
+        </Context.Provider>
+    );
+};
